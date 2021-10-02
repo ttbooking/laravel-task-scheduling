@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Illuminate\Console\Scheduling\CallbackEvent;
+use TTBooking\TaskScheduling\Contracts\Task;
+
+class {{ class }} implements Task
+{
+    /**
+     * Execute the task.
+     *
+     * @return void
+     */
+    public function handle(): void
+    {
+        //
+    }
+
+    /**
+     * Check if task is enabled or not.
+     *
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Schedule task execution.
+     *
+     * @param  CallbackEvent  $fire
+     * @return void
+     */
+    public function schedule(CallbackEvent $fire): void
+    {
+        $fire->hourly();
+    }
+}

@@ -1,0 +1,52 @@
+{
+    "name": "ttbooking/laravel-task-scheduling",
+    "description": "Task Scheduling service for Laravel",
+    "type": "library",
+    "keywords": ["task scheduling", "task", "scheduling", "scheduler"],
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/ttbooking/task-scheduling/issues",
+        "source": "https://github.com/ttbooking/task-scheduling"
+    },
+    "authors": [
+        {
+            "name": "Sergey Danilchenko",
+            "email": "s.danilchenko@ttbooking.ru"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/console": "^8.0",
+        "symfony/finder": "^5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "vimeo/psalm": "^4.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "TTBooking\\TaskScheduling\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TTBooking\\TaskScheduling\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "psalm": "vendor/bin/psalm",
+        "test": "vendor/bin/phpunit"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TTBooking\\TaskScheduling\\TaskSchedulingServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
