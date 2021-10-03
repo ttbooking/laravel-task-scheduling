@@ -6,6 +6,9 @@ namespace TTBooking\TaskScheduling\Console;
 
 use Illuminate\Console\GeneratorCommand;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class TaskMakeCommand extends GeneratorCommand
 {
     /**

@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace TTBooking\TaskScheduling\Console;
 
 use Illuminate\Console\Command;
-use TTBooking\TaskScheduling\Concerns\TaskDiscovery;
+use TTBooking\TaskScheduling\TaskIterator;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class TaskClearCommand extends Command
 {
-    use TaskDiscovery;
-
     /**
      * The console command name.
      *
@@ -28,11 +29,12 @@ class TaskClearCommand extends Command
     /**
      * Execute the console command.
      *
+     * @param  TaskIterator  $tasks
      * @return void
      */
-    public function handle(): void
+    public function handle(TaskIterator $tasks): void
     {
-        @unlink($this->cachePath('tasks.php'));
+        @unlink($tasks->cachePath('tasks.php'));
 
         $this->info('Cached tasks cleared!');
     }

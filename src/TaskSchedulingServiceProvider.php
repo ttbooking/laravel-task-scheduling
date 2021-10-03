@@ -9,8 +9,6 @@ use Illuminate\Support\ServiceProvider;
 
 class TaskSchedulingServiceProvider extends ServiceProvider
 {
-    use Concerns\TaskDiscovery;
-
     /**
      * Bootstrap any application services.
      *
@@ -45,7 +43,7 @@ class TaskSchedulingServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/task-scheduling.php', 'task-scheduling');
 
         if ($this->app->runningInConsole()) {
-            $this->callAfterResolving(Schedule::class, Scheduler::for($this->getTaskIterator()));
+            $this->callAfterResolving(Schedule::class, Scheduler::for(new TaskIterator($this->app)));
         }
     }
 }

@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace TTBooking\TaskScheduling\Console;
 
 use Illuminate\Console\Command;
-use TTBooking\TaskScheduling\Concerns\TaskDiscovery;
+use TTBooking\TaskScheduling\TaskIterator;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class TaskCacheCommand extends Command
 {
-    use TaskDiscovery;
-
     /**
      * The console command name.
      *
@@ -28,25 +29,18 @@ class TaskCacheCommand extends Command
     /**
      * Execute the console command.
      *
+     * @param  TaskIterator  $tasks
      * @return void
      */
-    public function handle(): void
+    public function handle(TaskIterator $tasks): void
     {
         $this->call('task:clear');
 
         file_put_contents(
-            $this->cachePath('tasks.php'),
-            '<?php return '.var_export($this->getTasks(), true).';'.PHP_EOL
+            $tasks->cachePath('tasks.php'),
+            '<?php return '.var_export($tasks->discoverTasks(), true).';'.PHP_EOL
         );
 
         $this->info('Tasks cached successfully!');
-    }
-
-    /**
-     * @return array
-     */
-    protected function getTasks(): array
-    {
-        return iterator_to_array($this->discoverTasks());
     }
 }
