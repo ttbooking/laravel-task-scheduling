@@ -28,11 +28,17 @@ class TaskIterator implements IteratorAggregate
      */
     public function getIterator(): Generator
     {
-        $tasks = $this->getCachedTasks() ?? $this->discoverTasks();
-
-        foreach ($tasks as $task) {
+        foreach ($this->getTasks() as $task) {
             yield $this->app->make($task);
         }
+    }
+
+    /**
+     * @return array<class-string<Task>>
+     */
+    public function getTasks(): array
+    {
+        return $this->getCachedTasks() ?? iterator_to_array($this->discoverTasks());
     }
 
     /**
@@ -54,7 +60,7 @@ class TaskIterator implements IteratorAggregate
     /**
      * @return Generator<class-string<Task>>
      */
-    public function discoverTasks(): Generator
+    protected function discoverTasks(): Generator
     {
         /** @var iterable<SplFileInfo> $tasks */
         $tasks = (new Finder)->in($this->paths())->files();

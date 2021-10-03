@@ -38,7 +38,7 @@ class TaskCacheCommand extends Command
 
         file_put_contents(
             $tasks->cachePath('tasks.php'),
-            '<?php return '.var_export($tasks->discoverTasks(), true).';'.PHP_EOL
+            '<?php return '.var_export($tasks->getTasks(), true).';'.PHP_EOL
         );
 
         $this->info('Tasks cached successfully!');
