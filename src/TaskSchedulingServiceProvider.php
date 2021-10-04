@@ -43,7 +43,12 @@ class TaskSchedulingServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/task-scheduling.php', 'task-scheduling');
 
         if ($this->app->runningInConsole()) {
-            $this->callAfterResolving(Schedule::class, Scheduler::for(new TaskIterator($this->app)));
+            /** @psalm-suppress all */
+            $this->callAfterResolving(Schedule::class, (new Scheduler)
+                ->onConnection($this->app['config']['task-scheduling.connection'])
+                ->onQueue($this->app['config']['task-scheduling.queue'])
+                ->make(new TaskIterator($this->app))
+            );
         }
     }
 }

@@ -12,15 +12,41 @@ use TTBooking\TaskScheduling\Contracts\Task;
 
 class Scheduler
 {
+    public function __construct(protected ?string $connection = null, protected ?string $queue = null)
+    {
+    }
+
+    /**
+     * @param  string|null  $connection
+     * @return $this
+     */
+    public function onConnection(?string $connection): static
+    {
+        $this->connection = $connection;
+
+        return $this;
+    }
+
+    /**
+     * @param  string|null  $queue
+     * @return $this
+     */
+    public function onQueue(?string $queue): static
+    {
+        $this->queue = $queue;
+
+        return $this;
+    }
+
     /**
      * @param  iterable<Task>  $tasks
      * @return Closure
      */
-    public static function for(iterable $tasks): Closure
+    public function make(iterable $tasks): Closure
     {
         return function (Schedule $schedule) use ($tasks) {
             foreach ($tasks as $task) {
-                static::isTaskEnabled($task) && static::multiSchedule($schedule, $task);
+                $this->isTaskEnabled($task) && $this->multiSchedule($schedule, $task);
             }
         };
     }
@@ -29,7 +55,7 @@ class Scheduler
      * @param  Task  $task
      * @return bool
      */
-    protected static function isTaskEnabled(Task $task): bool
+    protected function isTaskEnabled(Task $task): bool
     {
         return ! method_exists($task, 'isEnabled') || $task->isEnabled();
     }
@@ -41,12 +67,12 @@ class Scheduler
      * @param  Task  $task
      * @return void
      */
-    protected static function multiSchedule(Schedule $schedule, Task $task): void
+    protected function multiSchedule(Schedule $schedule, Task $task): void
     {
         try {
             $scheduleMethod = new ReflectionMethod($task, 'schedule');
             $argc = $scheduleMethod->getNumberOfParameters();
-            $argv = static::eventFactory($schedule, $task, $argc);
+            $argv = $this->eventFactory($schedule, $task, $argc);
             $scheduleMethod->invokeArgs($task, $argv);
         } catch (ReflectionException) {
         }
@@ -60,8 +86,14 @@ class Scheduler
      * @param  int  $instances
      * @return CallbackEvent[]
      */
-    protected static function eventFactory(Schedule $schedule, Task $task, int $instances = 1): array
+    protected function eventFactory(Schedule $schedule, Task $task, int $instances = 1): array
     {
-        return array_map([$schedule, 'job'], array_fill(0, $instances, $task));
+        return array_map(
+            /** @psalm-suppress MixedArgument, NoInterfaceProperties */
+            fn (Task $task) => $schedule->job(
+                $task, $task->queue ?? $this->queue, $task->connection ?? $this->connection
+            ),
+            array_fill(0, $instances, $task)
+        );
     }
 }
