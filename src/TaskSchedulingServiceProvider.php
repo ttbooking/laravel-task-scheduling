@@ -28,7 +28,9 @@ class TaskSchedulingServiceProvider extends ServiceProvider
             $this->commands([
                 Console\TaskCacheCommand::class,
                 Console\TaskClearCommand::class,
+                Console\TaskDispatchCommand::class,
                 Console\TaskMakeCommand::class,
+                Console\TaskRunCommand::class,
             ]);
         }
     }
