@@ -32,14 +32,16 @@ class TaskRunCommand extends Command
     /**
      * Execute the console command.
      *
+     * @param  Container  $container
+     * @param  Dispatcher  $dispatcher
      * @return void
      *
      * @throws InvalidArgumentException
      */
     public function handle(Container $container, Dispatcher $dispatcher): void
     {
-        /** @var string $task */
-        $task = $this->argument('task');
+        /** @psalm-suppress MixedArgumentTypeCoercion, PossiblyNullArgument */
+        $task = str_replace('/', '\\', $this->argument('task'));
 
         if (! class_exists($task)) {
             throw new InvalidArgumentException('Task not found.');
@@ -50,5 +52,7 @@ class TaskRunCommand extends Command
         }
 
         $dispatcher->dispatchSync($container->make($task));
+
+        $this->info("Task [$task] successfully finished!");
     }
 }

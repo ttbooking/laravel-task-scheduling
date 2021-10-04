@@ -6,6 +6,7 @@ namespace TTBooking\TaskScheduling\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Bus\Dispatcher;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 use TTBooking\TaskScheduling\Contracts\Task;
@@ -35,16 +36,17 @@ class TaskDispatchCommand extends Command
     /**
      * Execute the console command.
      *
+     * @param  Container  $container
+     * @param  Repository  $config
+     * @param  Dispatcher  $dispatcher
      * @return void
      *
      * @throws InvalidArgumentException
      */
-    public function handle(Container $container, Dispatcher $dispatcher): void
+    public function handle(Container $container, Repository $config, Dispatcher $dispatcher): void
     {
-        /** @var string $task */
-        $task = $this->argument('task');
-        $connection = $this->option('connection');
-        $queue = $this->option('queue');
+        /** @psalm-suppress MixedArgumentTypeCoercion, PossiblyNullArgument */
+        $task = str_replace('/', '\\', $this->argument('task'));
 
         if (! class_exists($task)) {
             throw new InvalidArgumentException('Task not found.');
@@ -56,9 +58,19 @@ class TaskDispatchCommand extends Command
 
         /** @var Task $instance */
         $instance = $container->make($task);
-        $connection && method_exists($instance, 'onConnection') && $instance->onConnection($connection);
-        $queue && method_exists($instance, 'onQueue') && $instance->onQueue($queue);
+
+        /** @psalm-suppress NoInterfaceProperties */
+        method_exists($instance, 'onConnection') && $instance->onConnection(
+            $this->option('connection') ?? $instance->connection ?? $config->get('task-scheduling.connection')
+        );
+
+        /** @psalm-suppress NoInterfaceProperties */
+        method_exists($instance, 'onQueue') && $instance->onQueue(
+            $this->option('queue') ?? $instance->queue ?? $config->get('task-scheduling.queue')
+        );
 
         $dispatcher->dispatch($instance);
+
+        $this->info("Task [$task] successfully enqueued!");
     }
 }
