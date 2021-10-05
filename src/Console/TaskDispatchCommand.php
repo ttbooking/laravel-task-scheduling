@@ -49,11 +49,11 @@ class TaskDispatchCommand extends Command
         $task = str_replace('/', '\\', $this->argument('task'));
 
         if (! class_exists($task)) {
-            throw new InvalidArgumentException('Task not found.');
+            throw new InvalidArgumentException("Task [$task] not found.");
         }
 
         if (! is_subclass_of($task, Task::class)) {
-            throw new InvalidArgumentException('Class must implement ['.Task::class.'] interface.');
+            throw new InvalidArgumentException("Class [$task] must implement [".Task::class."] interface.");
         }
 
         /** @var Task $instance */
@@ -71,6 +71,6 @@ class TaskDispatchCommand extends Command
 
         $dispatcher->dispatch($instance);
 
-        $this->info("Task [$task] successfully enqueued!");
+        $this->info("Task <comment>[$task]</comment> successfully enqueued!");
     }
 }
