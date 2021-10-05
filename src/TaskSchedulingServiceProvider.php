@@ -24,15 +24,15 @@ class TaskSchedulingServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../stubs/task.stub' => $this->app->basePath('stubs/task.stub'),
             ], 'stub');
-
-            $this->commands([
-                Console\TaskCacheCommand::class,
-                Console\TaskClearCommand::class,
-                Console\TaskDispatchCommand::class,
-                Console\TaskMakeCommand::class,
-                Console\TaskRunCommand::class,
-            ]);
         }
+
+        $this->commands([
+            Console\TaskCacheCommand::class,
+            Console\TaskClearCommand::class,
+            Console\TaskDispatchCommand::class,
+            Console\TaskMakeCommand::class,
+            Console\TaskRunCommand::class,
+        ]);
     }
 
     /**
