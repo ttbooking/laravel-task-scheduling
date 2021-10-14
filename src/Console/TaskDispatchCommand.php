@@ -23,6 +23,7 @@ class TaskDispatchCommand extends Command
      */
     protected $signature = 'task:dispatch
                             {task : Task FQCN}
+                            {params? : Task parameters in query string format}
                             {--connection= : Set the desired connection for the task}
                             {--queue= : Set the desired queue for the task}';
 
@@ -45,8 +46,11 @@ class TaskDispatchCommand extends Command
      */
     public function handle(Container $container, Repository $config, Dispatcher $dispatcher): void
     {
-        /** @psalm-suppress MixedArgumentTypeCoercion, PossiblyNullArgument */
-        $task = str_replace('/', '\\', $this->argument('task'));
+        /** @psalm-suppress MixedArgumentTypeCoercion */
+        $task = str_replace('/', '\\', $this->argument('task') ?? '');
+
+        /** @psalm-suppress PossiblyInvalidArgument, PossiblyInvalidCast */
+        parse_str($this->argument('params') ?? '', $params);
 
         if (! class_exists($task)) {
             throw new InvalidArgumentException("Task [$task] not found.");
@@ -57,7 +61,7 @@ class TaskDispatchCommand extends Command
         }
 
         /** @var Task $instance */
-        $instance = $container->make($task);
+        $instance = $container->make($task, $params);
 
         /** @psalm-suppress NoInterfaceProperties */
         method_exists($instance, 'onConnection') && $instance->onConnection(

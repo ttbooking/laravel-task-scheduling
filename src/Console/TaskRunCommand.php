@@ -20,7 +20,9 @@ class TaskRunCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'task:run {task : Task FQCN}';
+    protected $signature = 'task:run
+                            {task : Task FQCN}
+                            {params? : Task parameters in query string format}';
 
     /**
      * The console command description.
@@ -40,8 +42,11 @@ class TaskRunCommand extends Command
      */
     public function handle(Container $container, Dispatcher $dispatcher): void
     {
-        /** @psalm-suppress MixedArgumentTypeCoercion, PossiblyNullArgument */
-        $task = str_replace('/', '\\', $this->argument('task'));
+        /** @psalm-suppress MixedArgumentTypeCoercion */
+        $task = str_replace('/', '\\', $this->argument('task') ?? '');
+
+        /** @psalm-suppress PossiblyInvalidArgument, PossiblyInvalidCast */
+        parse_str($this->argument('params') ?? '', $params);
 
         if (! class_exists($task)) {
             throw new InvalidArgumentException("Task [$task] not found.");
@@ -51,7 +56,7 @@ class TaskRunCommand extends Command
             throw new InvalidArgumentException("Class [$task] must implement [".Task::class."] interface.");
         }
 
-        $dispatcher->dispatchSync($container->make($task));
+        $dispatcher->dispatchSync($container->make($task, $params));
 
         $this->info("Task <comment>[$task]</comment> successfully finished!");
     }
