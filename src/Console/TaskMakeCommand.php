@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace TTBooking\TaskScheduling\Console;
 
 use Illuminate\Console\GeneratorCommand;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
+#[AsCommand(name: 'make:task')]
 class TaskMakeCommand extends GeneratorCommand
 {
     /**
@@ -17,6 +19,17 @@ class TaskMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $name = 'make:task';
+
+    /**
+     * The name of the console command.
+     *
+     * This name is used to identify the command during lazy loading.
+     *
+     * @var string|null
+     *
+     * @deprecated
+     */
+    protected static $defaultName = 'make:task';
 
     /**
      * The console command description.

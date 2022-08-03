@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace TTBooking\TaskScheduling\Console;
 
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Attribute\AsCommand;
 use TTBooking\TaskScheduling\TaskIterator;
 
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
+#[AsCommand(name: 'task:clear')]
 class TaskClearCommand extends Command
 {
     /**
@@ -18,6 +20,17 @@ class TaskClearCommand extends Command
      * @var string
      */
     protected $name = 'task:clear';
+
+    /**
+     * The name of the console command.
+     *
+     * This name is used to identify the command during lazy loading.
+     *
+     * @var string|null
+     *
+     * @deprecated
+     */
+    protected static $defaultName = 'task:clear';
 
     /**
      * The console command description.

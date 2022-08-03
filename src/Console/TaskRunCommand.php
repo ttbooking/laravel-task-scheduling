@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace TTBooking\TaskScheduling\Console;
 
+use Symfony\Component\Console\Attribute\AsCommand;
+
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
+#[AsCommand(name: 'task:run')]
 class TaskRunCommand extends TaskDispatchCommand
 {
     /**
@@ -17,6 +20,17 @@ class TaskRunCommand extends TaskDispatchCommand
     protected $signature = 'task:run
                             {task : Task FQCN}
                             {params? : Task parameters in query string format}';
+
+    /**
+     * The name of the console command.
+     *
+     * This name is used to identify the command during lazy loading.
+     *
+     * @var string|null
+     *
+     * @deprecated
+     */
+    protected static $defaultName = 'task:run';
 
     /**
      * The console command description.

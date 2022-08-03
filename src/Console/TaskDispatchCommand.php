@@ -10,11 +10,13 @@ use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use TTBooking\TaskScheduling\Contracts\Task;
 
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
+#[AsCommand(name: 'task:dispatch')]
 class TaskDispatchCommand extends Command
 {
     /**
@@ -27,6 +29,17 @@ class TaskDispatchCommand extends Command
                             {params? : Task parameters in query string format}
                             {--connection= : Set the desired connection for the task}
                             {--queue= : Set the desired queue for the task}';
+
+    /**
+     * The name of the console command.
+     *
+     * This name is used to identify the command during lazy loading.
+     *
+     * @var string|null
+     *
+     * @deprecated
+     */
+    protected static $defaultName = 'task:dispatch';
 
     /**
      * The console command description.
