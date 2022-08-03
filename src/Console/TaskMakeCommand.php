@@ -7,9 +7,6 @@ namespace TTBooking\TaskScheduling\Console;
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 #[AsCommand(name: 'make:task')]
 class TaskMakeCommand extends GeneratorCommand
 {

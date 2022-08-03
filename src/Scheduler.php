@@ -89,7 +89,6 @@ class Scheduler
     protected function eventFactory(Schedule $schedule, Task $task, int $instances = 1): array
     {
         return array_map(
-            /** @psalm-suppress MixedArgument, NoInterfaceProperties */
             fn (Task $task) => $schedule->job(
                 $task, $task->queue ?? $this->queue, $task->connection ?? $this->connection
             ),

@@ -24,17 +24,19 @@ class TaskIterator implements IteratorAggregate
 
     /**
      * @return Generator<Task>
-     * @psalm-suppress MixedReturnTypeCoercion
      */
     public function getIterator(): Generator
     {
-        foreach ($this->getTasks() as $task) {
-            yield $this->app->make($task);
+        foreach ($this->getTasks() as $taskClass) {
+            /** @var Task $task */
+            $task = $this->app->make($taskClass);
+
+            yield $task;
         }
     }
 
     /**
-     * @return array<class-string<Task>>
+     * @return list<class-string<Task>>
      */
     public function getTasks(): array
     {
@@ -42,8 +44,7 @@ class TaskIterator implements IteratorAggregate
     }
 
     /**
-     * @return array<class-string<Task>>|null
-     * @psalm-suppress MixedInferredReturnType
+     * @return list<class-string<Task>>|null
      */
     protected function getCachedTasks(): ?array
     {
@@ -53,7 +54,6 @@ class TaskIterator implements IteratorAggregate
             return null;
         }
 
-        /** @psalm-suppress MixedReturnStatement */
         return require $cachedTasksPath;
     }
 
@@ -93,7 +93,6 @@ class TaskIterator implements IteratorAggregate
 
     /**
      * @return string[]
-     * @psalm-suppress MixedReturnTypeCoercion
      */
     protected function paths(): array
     {

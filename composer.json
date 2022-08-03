@@ -20,8 +20,9 @@
         "symfony/finder": "^5.0 || ^6.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
-        "vimeo/psalm": "^4.7"
+        "nunomaduro/larastan": "^2.1",
+        "orchestra/testbench": "^6.23 || ^7.0",
+        "phpunit/phpunit": "^9.5"
     },
     "autoload": {
         "psr-4": {
@@ -34,7 +35,7 @@
         }
     },
     "scripts": {
-        "psalm": "vendor/bin/psalm",
+        "analyze": "vendor/bin/phpstan",
         "test": "vendor/bin/phpunit"
     },
     "extra": {

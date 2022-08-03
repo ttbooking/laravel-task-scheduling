@@ -13,9 +13,6 @@ use InvalidArgumentException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use TTBooking\TaskScheduling\Contracts\Task;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 #[AsCommand(name: 'task:dispatch')]
 class TaskDispatchCommand extends Command
 {
@@ -85,10 +82,10 @@ class TaskDispatchCommand extends Command
      */
     protected function newTaskInstance(Container $container, Repository $config): Task
     {
-        /** @psalm-suppress MixedArgument */
-        return $this->configureTaskInstance(
-            $container->make($this->getTaskClass(), $this->getParameters()), $config
-        );
+        /** @var Task $task */
+        $task = $container->make($this->getTaskClass(), $this->getParameters());
+
+        return $this->configureTaskInstance($task, $config);
     }
 
     /**
@@ -99,12 +96,10 @@ class TaskDispatchCommand extends Command
     protected function configureTaskInstance(Task $instance, Repository $config): Task
     {
         if (! $this->sync) {
-            /** @psalm-suppress NoInterfaceProperties */
             method_exists($instance, 'onConnection') && $instance->onConnection(
                 $this->option('connection') ?? $instance->connection ?? $config->get('task-scheduling.connection')
             );
 
-            /** @psalm-suppress NoInterfaceProperties */
             method_exists($instance, 'onQueue') && $instance->onQueue(
                 $this->option('queue') ?? $instance->queue ?? $config->get('task-scheduling.queue')
             );
@@ -120,8 +115,11 @@ class TaskDispatchCommand extends Command
      */
     protected function getTaskClass(): string
     {
-        /** @psalm-suppress MixedArgumentTypeCoercion */
-        $task = str_replace('/', '\\', $this->argument('task') ?? '');
+        if (! is_string($task = $this->argument('task'))) {
+            throw new InvalidArgumentException('Argument "task" must be a valid class string.');
+        }
+
+        $task = str_replace('/', '\\', $task);
 
         if (! class_exists($task)) {
             throw new InvalidArgumentException("Task [$task] not found.");
@@ -135,12 +133,17 @@ class TaskDispatchCommand extends Command
     }
 
     /**
-     * @return array
+     * @return array<string, string|string[]>
+     *
+     * @throws InvalidArgumentException
      */
     protected function getParameters(): array
     {
-        /** @psalm-suppress PossiblyInvalidArgument, PossiblyInvalidCast */
-        parse_str($this->argument('params') ?? '', $params);
+        if (! is_string($query = $this->argument('params'))) {
+            throw new InvalidArgumentException('Argument "params" must be a valid query string.');
+        }
+
+        parse_str($query, $params);
 
         return $params;
     }

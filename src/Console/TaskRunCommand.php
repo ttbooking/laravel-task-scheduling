@@ -6,9 +6,6 @@ namespace TTBooking\TaskScheduling\Console;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 #[AsCommand(name: 'task:run')]
 class TaskRunCommand extends TaskDispatchCommand
 {

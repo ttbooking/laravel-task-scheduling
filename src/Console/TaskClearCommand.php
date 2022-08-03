@@ -8,9 +8,6 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 use TTBooking\TaskScheduling\TaskIterator;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 #[AsCommand(name: 'task:clear')]
 class TaskClearCommand extends Command
 {
