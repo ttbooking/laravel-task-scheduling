@@ -139,7 +139,7 @@ class TaskDispatchCommand extends Command
      */
     protected function getParameters(): array
     {
-        if (! is_string($query = $this->argument('params'))) {
+        if (! is_string($query = $this->argument('params') ?? '')) {
             throw new InvalidArgumentException('Argument "params" must be a valid query string.');
         }
 
