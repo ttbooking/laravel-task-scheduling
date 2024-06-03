@@ -30,7 +30,7 @@ class TaskIterator implements IteratorAggregate
         $staleCacheNotified = false;
 
         foreach ($this->getTasks() as $taskClass) {
-            if (! $this->app->bound($taskClass)) {
+            if (! class_exists($taskClass)) {
                 if (! $staleCacheNotified) {
                     app('log')->warning('Task cache is outdated. Please re-cache by executing `artisan task:cache` command.');
                     $staleCacheNotified = true;
