@@ -27,7 +27,18 @@ class TaskIterator implements IteratorAggregate
      */
     public function getIterator(): Generator
     {
+        $staleCacheNotified = false;
+
         foreach ($this->getTasks() as $taskClass) {
+            if (! $this->app->bound($taskClass)) {
+                if (! $staleCacheNotified) {
+                    trigger_error('Task cache is outdated. Please re-cache by executing `artisan task:cache` command.');
+                    $staleCacheNotified = true;
+                }
+
+                continue;
+            }
+
             /** @var Task $task */
             $task = $this->app->make($taskClass);
 
