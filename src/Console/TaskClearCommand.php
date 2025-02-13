@@ -19,17 +19,6 @@ class TaskClearCommand extends Command
     protected $name = 'task:clear';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'task:clear';
-
-    /**
      * The console command description.
      *
      * @var string
@@ -38,14 +27,11 @@ class TaskClearCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @param  TaskIterator  $tasks
-     * @return void
      */
     public function handle(TaskIterator $tasks): void
     {
         @unlink($tasks->cachePath('tasks.php'));
 
-        $this->info('Cached tasks cleared!');
+        $this->components->info('Cached tasks cleared!');
     }
 }

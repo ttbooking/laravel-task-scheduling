@@ -1,5 +1,7 @@
 /vendor
 /.idea
+/.vscode
+/.phpunit.cache
 /phpstan.neon
 /phpunit.xml
 composer.phar

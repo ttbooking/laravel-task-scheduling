@@ -3,7 +3,6 @@
 namespace TTBooking\TaskScheduling;
 
 use Generator;
-use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -18,9 +17,7 @@ use TTBooking\TaskScheduling\Contracts\Task;
  */
 class TaskIterator implements IteratorAggregate
 {
-    public function __construct(protected Application $app)
-    {
-    }
+    public function __construct(protected Application $app) {}
 
     /**
      * @return Generator<Task>
@@ -88,27 +85,23 @@ class TaskIterator implements IteratorAggregate
         }
     }
 
-    /**
-     * @param  string  $path
-     * @return string
-     */
     protected function appPath(string $path = ''): string
     {
         /** @var string $appPath */
         $appPath = method_exists($this->app, 'path')
             ? $this->app->path()
-            : $this->getConfig('app_path') ?? $this->app->basePath('app');
+            : config('task-scheduling.app_path') ?? $this->app->basePath('app');
 
         return $appPath.($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     protected function paths(): array
     {
         /** @var string|string[] $paths */
-        $paths = $this->getConfig('paths', []);
+        $paths = config('task-scheduling.paths', []);
 
         return array_filter(
             array_unique(Arr::wrap($paths)),
@@ -116,28 +109,11 @@ class TaskIterator implements IteratorAggregate
         );
     }
 
-    /**
-     * @param  string  $path
-     * @return string
-     */
     public function cachePath(string $path = ''): string
     {
         /** @var string $cachePath */
-        $cachePath = $this->getConfig('cache_path') ?? $this->app->bootstrapPath('cache');
+        $cachePath = config('task-scheduling.cache_path') ?? $this->app->bootstrapPath('cache');
 
         return $cachePath.($path ? DIRECTORY_SEPARATOR.$path : $path);
-    }
-
-    /**
-     * @param  string  $key
-     * @param  mixed  $default
-     * @return mixed
-     */
-    protected function getConfig(string $key, mixed $default = null): mixed
-    {
-        /** @var Repository $config */
-        $config = $this->app->make(Repository::class);
-
-        return $config->get('task-scheduling.'.$key, $default);
     }
 }

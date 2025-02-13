@@ -11,8 +11,6 @@ class {{ class }} implements Task
 {
     /**
      * Execute the task.
-     *
-     * @return void
      */
     public function handle(): void
     {
@@ -21,8 +19,6 @@ class {{ class }} implements Task
 
     /**
      * Check if task is enabled or not.
-     *
-     * @return bool
      */
     public function isEnabled(): bool
     {
@@ -31,9 +27,6 @@ class {{ class }} implements Task
 
     /**
      * Schedule task execution.
-     *
-     * @param  CallbackEvent  $fire
-     * @return void
      */
     public function schedule(CallbackEvent $fire): void
     {

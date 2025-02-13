@@ -28,17 +28,6 @@ class TaskDispatchCommand extends Command
                             {--queue= : Set the desired queue for the task}';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'task:dispatch';
-
-    /**
      * The console command description.
      *
      * @var string
@@ -47,18 +36,12 @@ class TaskDispatchCommand extends Command
 
     /**
      * The flag that means task must run synchronously.
-     *
-     * @var bool
      */
     protected bool $sync = false;
 
     /**
      * Execute the console command.
      *
-     * @param  Container  $container
-     * @param  Repository  $config
-     * @param  Dispatcher  $dispatcher
-     * @return void
      *
      * @throws InvalidArgumentException
      * @throws BindingResolutionException
@@ -69,14 +52,10 @@ class TaskDispatchCommand extends Command
             ($instance = $this->newTaskInstance($container, $config));
 
         [$task, $xed] = [$instance::class, $this->sync ? 'finished' : 'enqueued'];
-        $this->info("Task <comment>[$task]</comment> successfully $xed!");
+        $this->components->info("Task <comment>[$task]</comment> successfully $xed!");
     }
 
     /**
-     * @param  Container  $container
-     * @param  Repository  $config
-     * @return Task
-     *
      * @throws InvalidArgumentException
      * @throws BindingResolutionException
      */
@@ -88,11 +67,6 @@ class TaskDispatchCommand extends Command
         return $this->configureTaskInstance($task, $config);
     }
 
-    /**
-     * @param  Task  $instance
-     * @param  Repository  $config
-     * @return Task
-     */
     protected function configureTaskInstance(Task $instance, Repository $config): Task
     {
         if (! $this->sync) {
@@ -126,7 +100,7 @@ class TaskDispatchCommand extends Command
         }
 
         if (! is_subclass_of($task, Task::class)) {
-            throw new InvalidArgumentException("Class [$task] must implement [".Task::class."] interface.");
+            throw new InvalidArgumentException("Class [$task] must implement [".Task::class.'] interface.');
         }
 
         return $task;

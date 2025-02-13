@@ -7,17 +7,15 @@ namespace TTBooking\TaskScheduling;
 use Closure;
 use Illuminate\Console\Scheduling\CallbackEvent;
 use Illuminate\Console\Scheduling\Schedule;
-use ReflectionException, ReflectionMethod;
+use ReflectionException;
+use ReflectionMethod;
 use TTBooking\TaskScheduling\Contracts\Task;
 
 class Scheduler
 {
-    public function __construct(protected ?string $connection = null, protected ?string $queue = null)
-    {
-    }
+    public function __construct(protected ?string $connection = null, protected ?string $queue = null) {}
 
     /**
-     * @param  string|null  $connection
      * @return $this
      */
     public function onConnection(?string $connection): static
@@ -28,7 +26,6 @@ class Scheduler
     }
 
     /**
-     * @param  string|null  $queue
      * @return $this
      */
     public function onQueue(?string $queue): static
@@ -40,7 +37,6 @@ class Scheduler
 
     /**
      * @param  iterable<Task>  $tasks
-     * @return Closure
      */
     public function make(iterable $tasks): Closure
     {
@@ -51,10 +47,6 @@ class Scheduler
         };
     }
 
-    /**
-     * @param  Task  $task
-     * @return bool
-     */
     protected function isTaskEnabled(Task $task): bool
     {
         return ! method_exists($task, 'isEnabled') || $task->isEnabled();
@@ -62,10 +54,6 @@ class Scheduler
 
     /**
      * Schedule task execution.
-     *
-     * @param  Schedule  $schedule
-     * @param  Task  $task
-     * @return void
      */
     protected function multiSchedule(Schedule $schedule, Task $task): void
     {
@@ -81,10 +69,7 @@ class Scheduler
     /**
      * Instantiate needed number of schedule events for the given task.
      *
-     * @param  Schedule  $schedule
-     * @param  Task  $task
-     * @param  int  $instances
-     * @return CallbackEvent[]
+     * @return list<CallbackEvent>
      */
     protected function eventFactory(Schedule $schedule, Task $task, int $instances = 1): array
     {

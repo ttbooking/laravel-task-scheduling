@@ -11,6 +11,4 @@ use Illuminate\Console\Scheduling\CallbackEvent;
  * @method bool isEnabled() Check if task is enabled or not.
  * @method void schedule(CallbackEvent $fire) Schedule task execution.
  */
-interface Task
-{
-}
+interface Task {}

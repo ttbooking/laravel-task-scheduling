@@ -1,7 +1,7 @@
 {
     "name": "ttbooking/laravel-task-scheduling",
-    "description": "Task Scheduling service for Laravel",
     "type": "library",
+    "description": "Task Scheduling service for Laravel",
     "keywords": ["task scheduling", "task", "scheduling", "scheduler"],
     "license": "MIT",
     "support": {
@@ -15,14 +15,15 @@
         }
     ],
     "require": {
-        "php": "^8.0",
-        "illuminate/console": "^8.74 || ^9.0 || ^10.0 || ^11.0",
-        "symfony/finder": "^5.0 || ^6.0 || ^7.0"
+        "php": "^8.1",
+        "illuminate/console": "^10.35 || ^11.0 || ^12.0",
+        "symfony/finder": "^6.0 || ^7.0"
     },
     "require-dev": {
-        "larastan/larastan": "^2.7",
-        "orchestra/testbench": "^6.23 || ^7.0 || ^8.0 || ^9.0",
-        "phpunit/phpunit": "^9.5.10 || ^10.0 || ^11.0"
+        "larastan/larastan": "^2.7 || ^3.0",
+        "laravel/pint": "^1.11",
+        "orchestra/testbench": "^8.14 || ^9.0 || ^10.0",
+        "phpunit/phpunit": "^10.0 || ^11.0 || ^12.0"
     },
     "autoload": {
         "psr-4": {
@@ -33,10 +34,6 @@
         "psr-4": {
             "TTBooking\\TaskScheduling\\Tests\\": "tests/"
         }
-    },
-    "scripts": {
-        "analyze": "vendor/bin/phpstan",
-        "test": "vendor/bin/phpunit"
     },
     "extra": {
         "laravel": {
@@ -49,5 +46,10 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "scripts": {
+        "analyse": "@php vendor/bin/phpstan analyse",
+        "lint": "@php vendor/bin/pint --test",
+        "test": "@php vendor/bin/phpunit"
+    }
 }

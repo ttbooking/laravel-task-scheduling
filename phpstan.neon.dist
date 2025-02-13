@@ -1,8 +1,10 @@
-parameters:
-    level: 9
-    paths:
-        - src
-        - config
-
 includes:
-    - vendor/nunomaduro/larastan/extension.neon
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - config
+        - src
+        - tests
+
+    level: max

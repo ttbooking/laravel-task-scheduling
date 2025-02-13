@@ -19,17 +19,6 @@ class TaskRunCommand extends TaskDispatchCommand
                             {params? : Task parameters in query string format}';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'task:run';
-
-    /**
      * The console command description.
      *
      * @var string
@@ -38,8 +27,6 @@ class TaskRunCommand extends TaskDispatchCommand
 
     /**
      * The flag that means task must run synchronously.
-     *
-     * @var bool
      */
     protected bool $sync = true;
 }
