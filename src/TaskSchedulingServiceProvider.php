@@ -15,13 +15,21 @@ class TaskSchedulingServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
+            if (method_exists($this, 'optimizes')) {
+                $this->optimizes(
+                    optimize: 'task:cache',
+                    clear: 'task:clear',
+                    key: 'laravel-task-scheduling',
+                );
+            }
+
             $this->publishes([
                 __DIR__.'/../config/task-scheduling.php' => $this->app->configPath('task-scheduling.php'),
-            ], 'config');
+            ], ['task-scheduling-config', 'task-scheduling', 'config']);
 
             $this->publishes([
                 __DIR__.'/../stubs/task.stub' => $this->app->basePath('stubs/task.stub'),
-            ], 'stub');
+            ], ['task-scheduling-stub', 'task-scheduling', 'stub']);
         }
 
         $this->commands([
