@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TTBooking\TaskScheduling;
 
 use Closure;
-use Illuminate\Console\Scheduling\CallbackEvent;
+use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use ReflectionException;
 use ReflectionMethod;
@@ -52,6 +52,11 @@ class Scheduler
         return ! method_exists($task, 'isEnabled') || $task->isEnabled();
     }
 
+    protected function isTaskIsolated(Task $task): bool
+    {
+        return method_exists($task, 'isIsolated') && $task->isIsolated();
+    }
+
     /**
      * Schedule task execution.
      */
@@ -69,14 +74,16 @@ class Scheduler
     /**
      * Instantiate needed number of schedule events for the given task.
      *
-     * @return list<CallbackEvent>
+     * @return list<Event>
      */
     protected function eventFactory(Schedule $schedule, Task $task, int $instances = 1): array
     {
         return array_map(
-            fn (Task $task) => $schedule->job(
-                $task, $task->queue ?? $this->queue, $task->connection ?? $this->connection
-            ),
+            $this->isTaskIsolated($task)
+                ? fn (Task $task) => $schedule->command('task:run '.$task::class)
+                : fn (Task $task) => $schedule->job(
+                    $task, $task->queue ?? $this->queue, $task->connection ?? $this->connection
+                ),
             array_fill(0, $instances, $task)
         );
     }
