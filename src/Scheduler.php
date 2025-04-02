@@ -80,7 +80,7 @@ class Scheduler
     {
         return array_map(
             $this->isTaskIsolated($task)
-                ? fn (Task $task) => $schedule->command('task:run '.$task::class)
+                ? fn (Task $task) => $schedule->command('task:run', [$task::class])
                 : fn (Task $task) => $schedule->job(
                     $task, $task->queue ?? $this->queue, $task->connection ?? $this->connection
                 ),
