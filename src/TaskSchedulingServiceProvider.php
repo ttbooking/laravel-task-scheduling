@@ -15,6 +15,7 @@ class TaskSchedulingServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
+            // @phpstan-ignore function.alreadyNarrowedType
             if (method_exists($this, 'optimizes')) {
                 $this->optimizes(
                     optimize: 'task:cache',

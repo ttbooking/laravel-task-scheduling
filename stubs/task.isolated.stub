@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use Illuminate\Console\Scheduling\CallbackEvent;
-use TTBooking\TaskScheduling\Contracts\Task;
+use Illuminate\Console\Scheduling\Event;
+use TTBooking\TaskScheduling\Contracts\IsolatedTask;
 
-class {{ class }} implements Task
+class {{ class }} implements IsolatedTask
 {
     /**
      * Execute the task.
@@ -28,8 +28,8 @@ class {{ class }} implements Task
     /**
      * Schedule task execution.
      */
-    public function schedule(CallbackEvent $fire): void
+    public function schedule(Event $fire): void
     {
-        $fire->hourly();
+        $fire->hourly()->runInBackground();
     }
 }

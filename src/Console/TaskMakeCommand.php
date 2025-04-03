@@ -6,6 +6,11 @@ namespace TTBooking\TaskScheduling\Console;
 
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+use function Laravel\Prompts\confirm;
 
 #[AsCommand(name: 'make:task')]
 class TaskMakeCommand extends GeneratorCommand
@@ -36,7 +41,13 @@ class TaskMakeCommand extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return $this->resolveStubPath('/stubs/task.stub');
+        $stub = match (true) {
+            $type = $this->option('type') => "/stubs/task.$type.stub",
+            $this->option('isolated') => '/stubs/task.isolated.stub',
+            default => '/stubs/task.stub',
+        };
+
+        return $this->resolveStubPath($stub);
     }
 
     /**
@@ -57,5 +68,31 @@ class TaskMakeCommand extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace.'\Tasks';
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return list<array>
+     */
+    protected function getOptions(): array
+    {
+        return [
+            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the task already exists'],
+            ['isolated', 'i', InputOption::VALUE_NONE, 'Generate an isolated, running in separate process task class'],
+            ['type', null, InputOption::VALUE_REQUIRED, 'Manually specify the task stub file to use'],
+        ];
+    }
+
+    /**
+     * Interact further with the user if they were prompted for missing arguments.
+     */
+    protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output): void
+    {
+        if ($this->didReceiveOptions($input)) {
+            return;
+        }
+
+        $input->setOption('isolated', confirm('Should the task run in a separate process?', false));
     }
 }

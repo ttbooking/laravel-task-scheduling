@@ -13,14 +13,14 @@ use Symfony\Component\Finder\Finder;
 use TTBooking\TaskScheduling\Contracts\Task;
 
 /**
- * @implements IteratorAggregate<Task>
+ * @implements IteratorAggregate<int, Task>
  */
 class TaskIterator implements IteratorAggregate
 {
     public function __construct(protected Application $app) {}
 
     /**
-     * @return Generator<Task>
+     * @return Generator<int, Task>
      */
     public function getIterator(): Generator
     {
@@ -48,7 +48,7 @@ class TaskIterator implements IteratorAggregate
      */
     public function getTasks(): array
     {
-        return $this->getCachedTasks() ?? iterator_to_array($this->discoverTasks());
+        return $this->getCachedTasks() ?? array_values(iterator_to_array($this->discoverTasks()));
     }
 
     /**
@@ -62,15 +62,15 @@ class TaskIterator implements IteratorAggregate
             return null;
         }
 
+        /** @var list<class-string<Task>> */
         return require $cachedTasksPath;
     }
 
     /**
-     * @return Generator<class-string<Task>>
+     * @return Generator<int, class-string<Task>>
      */
     protected function discoverTasks(): Generator
     {
-        /** @var iterable<SplFileInfo> $tasks */
         $tasks = (new Finder)->in($this->paths())->files();
 
         foreach ($tasks as $task) {
@@ -88,7 +88,7 @@ class TaskIterator implements IteratorAggregate
     protected function appPath(string $path = ''): string
     {
         /** @var string $appPath */
-        $appPath = method_exists($this->app, 'path')
+        $appPath = method_exists($this->app, 'path') // @phpstan-ignore function.alreadyNarrowedType
             ? $this->app->path()
             : config('task-scheduling.app_path') ?? $this->app->basePath('app');
 
@@ -100,13 +100,13 @@ class TaskIterator implements IteratorAggregate
      */
     protected function paths(): array
     {
-        /** @var string|string[] $paths */
-        $paths = config('task-scheduling.paths', []);
+        /** @var string[] $paths */
+        $paths = Arr::wrap(config('task-scheduling.paths', []));
 
-        return array_filter(
-            array_unique(Arr::wrap($paths)),
+        return array_values(array_filter(
+            array_unique($paths),
             fn (string $path) => is_dir($path)
-        );
+        ));
     }
 
     public function cachePath(string $path = ''): string

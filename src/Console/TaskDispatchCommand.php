@@ -119,6 +119,7 @@ class TaskDispatchCommand extends Command
 
         parse_str($query, $params);
 
+        /** @var array<string, string|string[]> */
         return $params;
     }
 }

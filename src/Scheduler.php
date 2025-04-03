@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace TTBooking\TaskScheduling;
 
 use Closure;
+use Illuminate\Console\Scheduling\CallbackEvent;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use ReflectionException;
 use ReflectionMethod;
+use TTBooking\TaskScheduling\Contracts\IsolatedTask;
 use TTBooking\TaskScheduling\Contracts\Task;
 
 class Scheduler
@@ -49,16 +51,27 @@ class Scheduler
 
     protected function isTaskEnabled(Task $task): bool
     {
+        // @phpstan-ignore function.alreadyNarrowedType
         return ! method_exists($task, 'isEnabled') || $task->isEnabled();
     }
 
+    /**
+     * @template TEvent of Event
+     *
+     * @param  Task<TEvent>  $task
+     * @return (TEvent is CallbackEvent ? false : true)
+     */
     protected function isTaskIsolated(Task $task): bool
     {
-        return method_exists($task, 'isIsolated') && $task->isIsolated();
+        return $task instanceof IsolatedTask;
     }
 
     /**
      * Schedule task execution.
+     *
+     * @template TEvent of Event
+     *
+     * @param  Task<TEvent>  $task
      */
     protected function multiSchedule(Schedule $schedule, Task $task): void
     {
@@ -74,7 +87,10 @@ class Scheduler
     /**
      * Instantiate needed number of schedule events for the given task.
      *
-     * @return list<Event>
+     * @template TEvent of Event
+     *
+     * @param  Task<TEvent>  $task
+     * @return list<TEvent>
      */
     protected function eventFactory(Schedule $schedule, Task $task, int $instances = 1): array
     {
@@ -82,6 +98,7 @@ class Scheduler
             $this->isTaskIsolated($task)
                 ? fn (Task $task) => $schedule->command('task:run', [$task::class])
                 : fn (Task $task) => $schedule->job(
+                    // @phpstan-ignore argument.type, argument.type
                     $task, $task->queue ?? $this->queue, $task->connection ?? $this->connection
                 ),
             array_fill(0, $instances, $task)
