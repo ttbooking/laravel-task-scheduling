@@ -8,7 +8,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use IteratorAggregate;
 use ReflectionClass;
-use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 use TTBooking\TaskScheduling\Contracts\Task;
 
