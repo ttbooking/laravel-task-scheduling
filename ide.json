@@ -1,0 +1,39 @@
+{
+    "$schema": "https://laravel-ide.com/schema/laravel-ide-v2.json",
+    "codeGenerations": [
+        {
+            "id": "ttbooking/laravel-task-scheduling:task",
+            "name": "Create Scheduled Task",
+            "files": [
+                {
+                    "directory": "app/Tasks",
+                    "template": {
+                        "path": "/stubs/task.stub",
+                        "fallbackPath": "stubs/task.stub",
+                        "parameters": {
+                            "{{ namespace }}": "${INPUT_FQN|namespace}",
+                            "{{ class }}": "${INPUT_FQN|className}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ttbooking/laravel-task-scheduling:task.isolated",
+            "name": "Create Scheduled Task (Isolated)",
+            "files": [
+                {
+                    "directory": "app/Tasks",
+                    "template": {
+                        "path": "/stubs/task.isolated.stub",
+                        "fallbackPath": "stubs/task.isolated.stub",
+                        "parameters": {
+                            "{{ namespace }}": "${INPUT_FQN|namespace}",
+                            "{{ class }}": "${INPUT_FQN|className}"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
